@@ -101,7 +101,7 @@ int main(void)
 	int err;
 	
 	// initialize the IOs and bluetooth
-	err = initIO();
+	err = initButtonsLEDs();
 	err = initBluetooth();
 
 	// register callbacks for connected and disconnected
@@ -143,10 +143,11 @@ void button_changed(uint32_t button_state, uint32_t has_changed)
 	// }
 }
 
-int initIO()
+int initButtonsLEDs()
 {
 	int result;
 
+	// init Button and leds
 	result = gpio_pin_configure_dt(&button0, GPIO_INPUT);
 	result = dk_buttons_init(NULL);
 	if (result < 0) {
@@ -241,8 +242,9 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
 		LOG_ERR("Failed to fetch temperature sample. Error value: %d\n", err);
         return err;
     }
-	LOG_DBG("Temperature value1: %d", temperature_value.val1);
-	LOG_DBG("Temperature value2: %d", temperature_value.val2);
+	// double fTemperature = (double)temperature_value.val1 + (double)temperature_value.val1*1E-6;
+	double fTemperature = temperature_value.val1 + temperature_value.val2 * 1E-6;
+	LOG_DBG("Temperature: %f", fTemperature);
 	if (my_conn)
 		sensor_hub_update_temperature(my_conn, (uint8_t*)(&temperature_value.val1), sizeof(temperature_value.val1));
 	
@@ -254,8 +256,8 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
         LOG_ERR("Failed to fetch pressure sample. Error value:  %d\n", err);
         return err;
     }
-	LOG_DBG("Pressure value1: %d", pressure_value.val1);
-	LOG_DBG("Pressure value2: %d", pressure_value.val2);
+	double fPressure = pressure_value.val1 + pressure_value.val2 * 1E-6;
+	LOG_DBG("Pressure: %f", fPressure);
 	if (my_conn)
     	sensor_hub_update_pressure(my_conn, (uint8_t*)(&pressure_value.val1), sizeof(pressure_value.val1));
  
@@ -266,8 +268,8 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
         LOG_ERR("Failed to fetch humidity sample. Error value: %d\n", err);
         return err;
     }
-	LOG_DBG("Humidity value1: %d", humidity_value.val1);
-	LOG_DBG("Humidity value2: %d", humidity_value.val2);
+	double fHumidity = humidity_value.val1 + humidity_value.val2 * 1E-6;
+	LOG_DBG("Humidity: %f", fHumidity);
     if (my_conn)
 		sensor_hub_update_humidity(my_conn, (uint8_t*)(&humidity_value.val1), sizeof(humidity_value.val1));
  

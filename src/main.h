@@ -2,7 +2,7 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/drivers/sensor.h>
 
-int initIO();
+int initButtonsLEDs();
 int initBluetooth();
 void on_connected(struct bt_conn *conn, uint8_t err);
 void on_disconnected(struct bt_conn *conn, uint8_t reason);
