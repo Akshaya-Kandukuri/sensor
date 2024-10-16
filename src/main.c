@@ -246,7 +246,7 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
 	double fTemperature = temperature_value.val1 + temperature_value.val2 * 1E-6;
 	LOG_DBG("Temperature: %f", fTemperature);
 	if (my_conn)
-		sensor_hub_update_temperature(my_conn, (uint8_t*)(&temperature_value.val1), sizeof(temperature_value.val1));
+		sensor_hub_update_temperature(my_conn, &fTemperature, sizeof(fTemperature));
 	
  
     //Collect pressure sample and update characteristic
@@ -259,7 +259,7 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
 	double fPressure = pressure_value.val1 + pressure_value.val2 * 1E-6;
 	LOG_DBG("Pressure: %f", fPressure);
 	if (my_conn)
-    	sensor_hub_update_pressure(my_conn, (uint8_t*)(&pressure_value.val1), sizeof(pressure_value.val1));
+    	sensor_hub_update_pressure(my_conn, &fPressure, sizeof(fPressure));
  
     //Collect humidity sample and update characteristic
     err = sensor_channel_get(bme688Dev, SENSOR_CHAN_HUMIDITY, &humidity_value);
@@ -271,7 +271,7 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
 	double fHumidity = humidity_value.val1 + humidity_value.val2 * 1E-6;
 	LOG_DBG("Humidity: %f", fHumidity);
     if (my_conn)
-		sensor_hub_update_humidity(my_conn, (uint8_t*)(&humidity_value.val1), sizeof(humidity_value.val1));
+		sensor_hub_update_humidity(my_conn, &fHumidity, sizeof(fHumidity));
  
     return err;
 }

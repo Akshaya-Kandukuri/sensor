@@ -68,7 +68,7 @@ BT_GATT_SERVICE_DEFINE(sensor_hub,
  
 /* The below functions send a notification to a GATT client with the provided data,
 given that the CCCD has been set to Notify (0x1) */
-void sensor_hub_update_temperature(struct bt_conn *conn, const uint8_t *data, uint16_t len)
+void sensor_hub_update_temperature(struct bt_conn *conn, const double *data, uint16_t len)
 {
     const struct bt_gatt_attr *attr = &sensor_hub.attrs[2];
  
@@ -95,7 +95,7 @@ void sensor_hub_update_temperature(struct bt_conn *conn, const uint8_t *data, ui
     }
 }
  
-void sensor_hub_update_pressure(struct bt_conn *conn, const uint8_t *data, uint16_t len)
+void sensor_hub_update_pressure(struct bt_conn *conn, const double *data, uint16_t len)
 {
     const struct bt_gatt_attr *attr = &sensor_hub.attrs[5];
  
@@ -122,7 +122,7 @@ void sensor_hub_update_pressure(struct bt_conn *conn, const uint8_t *data, uint1
     }
 }
  
-void sensor_hub_update_humidity(struct bt_conn *conn, const uint8_t *data, uint16_t len)
+void sensor_hub_update_humidity(struct bt_conn *conn, const double *data, uint16_t len)
 {
     const struct bt_gatt_attr *attr = &sensor_hub.attrs[8];
  
