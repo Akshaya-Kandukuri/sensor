@@ -83,7 +83,7 @@ struct bt_conn_cb connection_callbacks = {
     .disconnected           = on_disconnected,
 };
 
-// // get the io specifications by using their 
+// // get the io specifications by using their nodes
 static const struct gpio_dt_spec ledR = GPIO_DT_SPEC_GET(LEDR_NODE, gpios);
 static const struct gpio_dt_spec ledG = GPIO_DT_SPEC_GET(LEDG_NODE, gpios);
 static const struct gpio_dt_spec ledB = GPIO_DT_SPEC_GET(LEDB_NODE, gpios);
@@ -98,7 +98,6 @@ bool isConnected = false;
 int main(void)
 {
 	LOG_INF("Start application...\n");
-	int blink_status = 0;
 	int err;
 	
 	// initialize the IOs and bluetooth
@@ -110,11 +109,9 @@ int main(void)
 
 	LOG_INF("Advertising successfully started\n");
 
-	while (1) {
-		err = gpio_pin_toggle_dt(&ledR);
-		LOG_INF("running main...");
+	while (true) {
 		// read data
-		//sample_and_update_all_sensor_values(bme688SensorDev);
+		sample_and_update_all_sensor_values(bme688SensorDev);
 
 		// let the red LED blink
 		if (isConnected == false)
@@ -172,7 +169,6 @@ int initIO()
 int initBluetooth()
 {
 	int err;
-	//logger_backend_ble_set_hook(backend_ble_hook, NULL);
 	err = bt_enable(NULL);
 	if (err) {
 		LOG_ERR("Bluetooth init failed (err %d)\n", err);
@@ -228,12 +224,13 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
     struct sensor_value temperature_value;
     struct sensor_value pressure_value;
     struct sensor_value humidity_value;
+	LOG_DBG("Reading sensor values");
      
     //Trigger sampling of BME688 sensor
     err = sensor_sample_fetch(bme688Dev);
     if(err < 0)
     {
-        printk("Failed to collect samples from bme688\n");
+		LOG_ERR("Failed to collect samples from bme688. Error value: %d\n", err);
         return err;
     }
  
@@ -241,39 +238,38 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
     err = sensor_channel_get(bme688Dev, SENSOR_CHAN_AMBIENT_TEMP, &temperature_value);
     if(err<0)
     {
-        printk("Failed to fetch temperature sample");
+		LOG_ERR("Failed to fetch temperature sample. Error value: %d\n", err);
         return err;
     }
-    sensor_hub_update_temperature(my_conn, (uint8_t*)(&temperature_value.val1), sizeof(temperature_value.val1));
+	LOG_DBG("Temperature value1: %d", temperature_value.val1);
+	LOG_DBG("Temperature value2: %d", temperature_value.val2);
+	if (my_conn)
+		sensor_hub_update_temperature(my_conn, (uint8_t*)(&temperature_value.val1), sizeof(temperature_value.val1));
+	
  
     //Collect pressure sample and update characteristic
     err = sensor_channel_get(bme688Dev, SENSOR_CHAN_PRESS, &pressure_value);
     if(err<0)
     {
-        printk("Failed to fetch pressure sample");
+        LOG_ERR("Failed to fetch pressure sample. Error value:  %d\n", err);
         return err;
     }
-    sensor_hub_update_pressure(my_conn, (uint8_t*)(&pressure_value.val1), sizeof(pressure_value.val1));
+	LOG_DBG("Pressure value1: %d", pressure_value.val1);
+	LOG_DBG("Pressure value2: %d", pressure_value.val2);
+	if (my_conn)
+    	sensor_hub_update_pressure(my_conn, (uint8_t*)(&pressure_value.val1), sizeof(pressure_value.val1));
  
     //Collect humidity sample and update characteristic
     err = sensor_channel_get(bme688Dev, SENSOR_CHAN_HUMIDITY, &humidity_value);
     if(err)
     {
-        printk("Failed to fetch humidity sample");
+        LOG_ERR("Failed to fetch humidity sample. Error value: %d\n", err);
         return err;
     }
-    sensor_hub_update_humidity(my_conn, (uint8_t*)(&humidity_value.val1), sizeof(humidity_value.val1));
+	LOG_DBG("Humidity value1: %d", humidity_value.val1);
+	LOG_DBG("Humidity value2: %d", humidity_value.val2);
+    if (my_conn)
+		sensor_hub_update_humidity(my_conn, (uint8_t*)(&humidity_value.val1), sizeof(humidity_value.val1));
  
     return err;
-}
-
-void backend_ble_hook(bool status, void *ctx)
-{
-	ARG_UNUSED(ctx);
-
-	if (status) {
-		LOG_INF("BLE Logger Backend enabled.");
-	} else {
-		LOG_INF("BLE Logger Backend disabled.");
-	}
 }

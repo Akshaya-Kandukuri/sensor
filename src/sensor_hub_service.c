@@ -74,7 +74,7 @@ void sensor_hub_update_temperature(struct bt_conn *conn, const uint8_t *data, ui
  
     struct bt_gatt_notify_params params =
     {
-        //.uuid   = BT_UUID_SENSOR_HUB_TEMP,
+        .uuid   = BT_UUID_SENSOR_HUB_TEMP,
         .attr   = attr,
         .data   = data,
         .len    = len,
@@ -101,7 +101,7 @@ void sensor_hub_update_pressure(struct bt_conn *conn, const uint8_t *data, uint1
  
     struct bt_gatt_notify_params params =
     {
-        //.uuid   = BT_UUID_SENSOR_HUB_PRESSURE,
+        .uuid   = BT_UUID_SENSOR_HUB_PRESSURE,
         .attr   = attr,
         .data   = data,
         .len    = len,
@@ -128,7 +128,7 @@ void sensor_hub_update_humidity(struct bt_conn *conn, const uint8_t *data, uint1
  
     struct bt_gatt_notify_params params =
     {
-        //.uuid   = BT_UUID_SENSOR_HUB_HUMIDITY,
+        .uuid   = BT_UUID_SENSOR_HUB_HUMIDITY,
         .attr   = attr,
         .data   = data,
         .len    = len,
