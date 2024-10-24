@@ -90,7 +90,8 @@ static const struct gpio_dt_spec ledB = GPIO_DT_SPEC_GET(LEDB_NODE, gpios);
 static const struct gpio_dt_spec button0 = GPIO_DT_SPEC_GET(BT0_NODE, gpios);
 
 // sensors
-static const struct device *bme688SensorDev = DEVICE_DT_GET_ONE(bosch_bme680);
+static const struct device *bme688SensorDev = DEVICE_DT_GET_ONE(bosch_bme680);	// Temperature, Humidity, Pressure, Air Quality
+static const struct device *adxl362 = DEVICE_DT_GET_ONE(adi_adxl362);			// 3-Axis Accelerometer
 
 // status variables
 bool isConnected = false;
@@ -99,7 +100,7 @@ int main(void)
 {
 	LOG_INF("Start application...\n");
 	int err;
-	
+
 	// initialize the IOs and bluetooth
 	err = initButtonsLEDs();
 	err = initBluetooth();
@@ -111,7 +112,8 @@ int main(void)
 
 	while (true) {
 		// read data
-		sample_and_update_all_sensor_values(bme688SensorDev);
+
+		sample_and_update_all_sensor_values(bme688SensorDev,adxl362);
 
 		// let the red LED blink
 		if (isConnected == false)
@@ -219,12 +221,15 @@ void on_disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 }
 
-int sample_and_update_all_sensor_values(const struct device *bme688Dev)
+int sample_and_update_all_sensor_values(const struct device *bme688Dev, const struct device *adxl362)
 {
     int err;
     struct sensor_value temperature_value;
     struct sensor_value pressure_value;
     struct sensor_value humidity_value;
+	struct sensor_value accelerationX;
+    struct sensor_value accelerationY;
+    struct sensor_value accelerationZ;
 	LOG_DBG("Reading sensor values");
      
     //Trigger sampling of BME688 sensor
@@ -273,5 +278,43 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev)
     if (my_conn)
 		sensor_hub_update_humidity(my_conn, &fHumidity, sizeof(fHumidity));
  
+	// Get acceleration values
+	err = sensor_sample_fetch(adxl362);
+	if(err < 0)
+    {
+		LOG_ERR("Failed to collect samples from adxl362. Error value: %d\n", err);
+        return err;
+    }
+
+	// X acceleration
+	err = sensor_channel_get(adxl362, SENSOR_CHAN_ACCEL_X, &accelerationX);
+    if(err)
+    {
+        LOG_ERR("Failed to fetch X acceleration sample. Error value: %d\n", err);
+        return err;
+    }
+	double fXAccel = accelerationX.val1 + accelerationX.val2 * 1E-6;
+	LOG_DBG("X acceleration: %f", fXAccel);
+
+	// Y acceleration
+	err = sensor_channel_get(adxl362, SENSOR_CHAN_ACCEL_Y, &accelerationY);
+    if(err)
+    {
+        LOG_ERR("Failed to fetch Y acceleration sample. Error value: %d\n", err);
+        return err;
+    }
+	double fYAccel = accelerationY.val1 + accelerationY.val2 * 1E-6;
+	LOG_DBG("Y acceleration: %f", fYAccel);
+
+	// Z acceleration
+	err = sensor_channel_get(adxl362, SENSOR_CHAN_ACCEL_Z, &accelerationZ);
+    if(err)
+    {
+        LOG_ERR("Failed to fetch Z acceleration sample. Error value: %d\n", err);
+        return err;
+    }
+	double fZAccel = accelerationZ.val1 + accelerationZ.val2 * 1E-6;
+	LOG_DBG("Z acceleration: %f", fZAccel);
+
     return err;
 }
