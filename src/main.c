@@ -295,6 +295,8 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev, const st
     }
 	double fXAccel = accelerationX.val1 + accelerationX.val2 * 1E-6;
 	LOG_DBG("X acceleration: %f", fXAccel);
+	if (my_conn)
+		sensor_hub_update_xAcceleration(my_conn, &fXAccel, sizeof(fXAccel));
 
 	// Y acceleration
 	err = sensor_channel_get(adxl362, SENSOR_CHAN_ACCEL_Y, &accelerationY);
@@ -305,6 +307,8 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev, const st
     }
 	double fYAccel = accelerationY.val1 + accelerationY.val2 * 1E-6;
 	LOG_DBG("Y acceleration: %f", fYAccel);
+	if (my_conn)
+		sensor_hub_update_yAcceleration(my_conn, &fYAccel, sizeof(fYAccel));
 
 	// Z acceleration
 	err = sensor_channel_get(adxl362, SENSOR_CHAN_ACCEL_Z, &accelerationZ);
@@ -315,6 +319,9 @@ int sample_and_update_all_sensor_values(const struct device *bme688Dev, const st
     }
 	double fZAccel = accelerationZ.val1 + accelerationZ.val2 * 1E-6;
 	LOG_DBG("Z acceleration: %f", fZAccel);
+	if (my_conn)
+		sensor_hub_update_zAcceleration(my_conn, &fZAccel, sizeof(fZAccel));
+
 
     return err;
 }
