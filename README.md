@@ -16,7 +16,7 @@ UUID: 181A
 UUID: 1821
 
 #### Characteristics:
-| UUID         | Characteristic      | Unit------- | Data type |
+| UUID         | Characteristic      | Unit        | Data type |
 | -------------| ------------------- | ----------- | --------- |
 | 506a55c4-... | Acceleration x axis | factor of g | double    |
 | 51838aff-... | Acceleration y axis | factor of g | double    |
