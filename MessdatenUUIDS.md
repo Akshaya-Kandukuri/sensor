@@ -3,18 +3,18 @@
 UUID: 181A
 
 ### Characteristics:
-| UUID     | Characteristic |
-| -------- | -------------- |
-| 2a6e     | Temperature    |
-| 2a6d     | Pressure       |
-| 2a6f     | Humidity       |
+| UUID     | Characteristic | Unit | Data type |
+| -------- | -------------- | ---- | --------- |
+| 2a6e     | Temperature    | °C   | double    |
+| 2a6d     | Pressure       | Pa   | double    |
+| 2a6f     | Humidity       | %    | double    |
 
 ## Position Service
 UUID: 1821
 
 ### Characteristics:
-| UUID         | Characteristic      |
-| -------------| ------------------- |
-| 506a55c4-... | Acceleration x axis |
-| 51838aff-... | Acceleration y axis |
-| 753e3050-... | Acceleration z axis |
+| UUID         | Characteristic      | Unit------- | Data type |
+| -------------| ------------------- | ----------- | --------- |
+| 506a55c4-... | Acceleration x axis | factor of g | double    |
+| 51838aff-... | Acceleration y axis | factor of g | double    |
+| 753e3050-... | Acceleration z axis | factor of g | double    |

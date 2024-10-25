@@ -1,0 +1,2 @@
+# Nordig Thingy 53 Environment Sensor
+This project contains the code to let a Nordic Thingy 53 measure temperature, humidity, air pressure and acceleration in three axes. The gathered data is sent via Bluetooth Low Energy. It has been build with ```nRF Connect SDK 2.7``` version. The data is read from the sensors ```BME688``` and ```ADXL362```. The sources consist of two modules. ```main``` contains the hardware initialization and reading the sensors. ```sensor_hub_service``` contains all necessary code to send data via Bluetooth.
